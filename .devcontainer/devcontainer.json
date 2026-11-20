@@ -1,5 +1,5 @@
 {
-  // Blueprint: Claude Code in einem Dev Container für VS Code (Podman)
+  // Leerer Dev Container mit Claude Code für VS Code (Podman)
   "name": "claude-blueprint-vscode",
 
   "build": {
@@ -15,26 +15,21 @@
   // damit Claude im Projektordner schreiben darf.
   "runArgs": ["--userns=keep-id:uid=1000,gid=1000"],
 
-  // Anmeldung von Claude und Gradle-Cache überleben einen Neubau,
-  // bleiben aber in Volumes und kommen nie auf den Mac.
+  // Die Anmeldung von Claude überlebt einen Neubau,
+  // bleibt aber im Volume und kommt nie auf den Mac.
   "mounts": [
-    "source=claude-blueprint-vscode-config,target=/home/dev/.claude,type=volume",
-    "source=claude-blueprint-vscode-gradle,target=/home/dev/.gradle,type=volume"
+    "source=claude-blueprint-vscode-config,target=/home/dev/.claude,type=volume"
   ],
 
   "customizations": {
     "vscode": {
       "extensions": [
         // "Claude Code for VS Code" von Anthropic
-        "anthropic.claude-code",
-        // Gradle-Aufgaben in der Seitenleiste (Microsoft)
-        "vscjava.vscode-gradle",
-        // Kotlin-Sprachunterstützung (Community, eher einfach)
-        "fwcd.kotlin"
+        "anthropic.claude-code"
       ]
     }
   },
 
   // Kurzer Selbsttest nach dem Start
-  "postCreateCommand": "java -version && claude --version && ./gradlew --version"
+  "postCreateCommand": "claude --version && git --version"
 }

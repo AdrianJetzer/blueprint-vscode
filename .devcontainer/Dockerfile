@@ -1,8 +1,7 @@
-# Blueprint: Claude Code in einem Dev Container für VS Code
-# Basis: Eclipse Temurin (JDK 21 auf Ubuntu 24.04), kein Microsoft-Image.
-# Kotlin und Gradle braucht es hier nicht: Der Gradle-Wrapper (./gradlew)
-# holt beides beim ersten Bau selbst.
-FROM eclipse-temurin:21-jdk-noble
+# Leerer Dev Container mit Claude Code für VS Code
+# Basis: Ubuntu 24.04, kein Microsoft-Image, keine Programmiersprache.
+# Was ein Projekt braucht, kommt später dazu.
+FROM ubuntu:24.04
 
 # Git und ein paar Werkzeuge, mit denen Claude arbeitet.
 # (Den VS Code Server lädt VS Code beim ersten Verbinden selbst in den Container.)
@@ -26,7 +25,7 @@ WORKDIR /home/dev
 RUN curl -fsSL https://claude.ai/install.sh | bash
 ENV PATH="/home/dev/.local/bin:${PATH}"
 
-# Anmeldung, Einstellungen und Gradle-Cache liegen in eigenen Volumes
+# Anmeldung und Einstellungen liegen in einem eigenen Volume
 # (siehe devcontainer.json), nicht auf dem Mac.
 ENV CLAUDE_CONFIG_DIR=/home/dev/.claude
-RUN mkdir -p /home/dev/.claude /home/dev/.gradle /home/dev/.vscode-server
+RUN mkdir -p /home/dev/.claude /home/dev/.vscode-server
