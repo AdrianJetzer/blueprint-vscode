@@ -6,19 +6,31 @@
     "dockerfile": "Dockerfile"
   },
 
+  // Läuft auf dem Mac, bevor der Container startet:
+  // Den Ordner ../work legst du selbst an, neben diesem Blueprint.
+  "initializeCommand": "test -d ../work || { echo 'Bitte zuerst den Ordner ../work anlegen (neben blueprint-vscode).'; exit 1; }",
+
+  // Nur ../work kommt in den Container, als /workspace.
+  // Der Blueprint selbst (.devcontainer, README, .git) bleibt draussen,
+  // Claude kann den Bauplan also nicht ändern.
+  "workspaceMount": "source=${localWorkspaceFolder}/../work,target=/workspace,type=bind",
+  "workspaceFolder": "/workspace",
+
   // Im Container arbeiten wir als "dev", nie als root.
   "remoteUser": "dev",
   "containerUser": "dev",
   "updateRemoteUserUID": false,
 
   // Podman (rootless): Dein Mac-Benutzer wird im Container zu "dev" (UID 1000),
-  // damit Claude im Projektordner schreiben darf.
+  // damit Claude in work schreiben darf.
   "runArgs": ["--userns=keep-id:uid=1000,gid=1000"],
 
-  // Die Anmeldung von Claude überlebt einen Neubau,
-  // bleibt aber im Volume und kommt nie auf den Mac.
   "mounts": [
-    "source=claude-blueprint-vscode-config,target=/home/dev/.claude,type=volume"
+    // Die Anmeldung von Claude überlebt einen Neubau,
+    // bleibt aber im Volume und kommt nie auf den Mac.
+    "source=claude-blueprint-vscode-config,target=/home/dev/.claude,type=volume",
+    // Die Hausregeln aus diesem Blueprint, nur lesbar.
+    "source=${localWorkspaceFolder}/CLAUDE.md,target=/home/dev/.claude/CLAUDE.md,type=bind,readonly"
   ],
 
   "customizations": {

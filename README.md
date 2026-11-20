@@ -6,13 +6,28 @@ Claude sieht diesen Projektordner und sonst nichts: keine Musik, keine Dokumente
 Der Container ist bewusst leer: Ubuntu, Git und Claude, keine Programmiersprache und kein Beispielprojekt.
 Was dein Projekt braucht, ergänzt du im `Dockerfile`.
 
+## Zwei Ordner: Blueprint und work
+
+```
+Projekte/
+├── blueprint-vscode/   ← dieses Repo, öffnest du in VS Code
+└── work/               ← legst du selbst an, hier arbeitet Claude
+```
+
+In den Container kommt **nur `work`**, als `/workspace`. Den Blueprint selbst (`.devcontainer/`, README, `.git`) sieht Claude nicht und kann den Bauplan darum nicht ändern.
+Was in `work` entsteht, gehört nicht zum Blueprint. `work` kann ein eigenes Git-Repo werden.
+
+- Den Bauplan änderst du auf dem Mac, ausserhalb des Containers. Bindest du in `devcontainer.json` weitere Ordner ein, sieht Claude auch diese.
+- Mehrere Blueprints im selben Ordner teilen sich ein `work`. Für getrennte Container getrennte Ordner verwenden.
+- `CLAUDE.md` aus diesem Repo wird nur lesbar in den Container eingebunden und gilt dort als Hausregel für Claude.
+
 ## Was drin ist
 
 | Datei | Zweck |
 |---|---|
 | `.devcontainer/Dockerfile` | Bauplan des Containers: Ubuntu 24.04, Git, ein paar Werkzeuge, Claude Code CLI, Benutzer `dev` ohne Root-Rechte |
 | `.devcontainer/devcontainer.json` | Sagt VS Code, wie der Container gestartet wird, und installiert darin die Erweiterung **Claude Code for VS Code** (`anthropic.claude-code`) |
-| `CLAUDE.md` | Hausregeln für Claude in diesem Projekt |
+| `CLAUDE.md` | Hausregeln für Claude, nur lesbar in den Container eingebunden |
 
 Das Image ist **kein Microsoft-Image**. Editor und die Erweiterung „Dev Containers“ kommen aber von Microsoft.
 
@@ -33,12 +48,17 @@ Das Image ist **kein Microsoft-Image**. Editor und die Erweiterung „Dev Contai
 
 ## Projekt im Container öffnen
 
-1. Dieses Repo klonen oder als Vorlage für ein neues Projekt kopieren.
-2. In VS Code: **File → Open Folder…** → genau diesen Ordner (nicht den Ordner darüber).
+1. Dieses Repo klonen und daneben den Ordner `work` anlegen:
+   ```bash
+   git clone https://github.com/AdrianJetzer/blueprint-vscode.git
+   mkdir work
+   ```
+   Fehlt `work`, bricht der Start ab mit *„Bitte zuerst den Ordner ../work anlegen“*.
+2. In VS Code: **File → Open Folder…** → `blueprint-vscode` (nicht den Ordner darüber).
 3. Unten rechts erscheint *„Folder contains a Dev Container configuration file. Reopen folder to develop in a container“* → **Reopen in Container**.
    (Alternativ: `⇧⌘P` → **Dev Containers: Reopen in Container**.)
 4. Beim ersten Mal dauert es etwas: Image bauen, VS Code Server und die Claude-Erweiterung in den Container laden.
-5. Kontrolle: Unten links steht **Dev Container: claude-blueprint-vscode**. Im Terminal zeigt `whoami` den Benutzer `dev`, und `ls /Users` meldet *„No such file or directory“*.
+5. Kontrolle: Unten links steht **Dev Container: claude-blueprint-vscode**, und im Explorer siehst du den Inhalt von `work`. Im Terminal zeigt `pwd` den Ordner `/workspace`, `whoami` den Benutzer `dev`, und `ls /Users` meldet *„No such file or directory“*.
 6. Claude öffnen (Symbol in der Seitenleiste oder Terminal: `claude`) und einmalig anmelden. Die Anmeldung landet im Volume `claude-blueprint-vscode-config`.
 
 ## Erweitern
