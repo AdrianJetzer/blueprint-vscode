@@ -3,8 +3,6 @@
 Eine Vorlage, mit der VS Code **und** Claude Code in einem abgeschlossenen Container arbeiten, statt direkt auf deinem Mac.
 Claude sieht diesen Projektordner und sonst nichts: keine Musik, keine Dokumente, keine Zugangsdaten.
 
-Schwester-Projekt: `../blueprint` für IntelliJ IDEA (Dev Containers dort nur mit Ultimate-Abo).
-
 ## Was drin ist
 
 | Datei | Zweck |
