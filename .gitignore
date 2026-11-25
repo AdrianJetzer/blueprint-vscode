@@ -1,2 +1,6 @@
 # macOS
 .DS_Store
+
+# Was in work entsteht, gehört nicht zum Repo (work kann ein eigenes Git-Repo werden)
+/work/*
+!/work/.gitkeep

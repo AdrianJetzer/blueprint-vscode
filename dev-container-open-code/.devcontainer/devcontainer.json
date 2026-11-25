@@ -1,0 +1,50 @@
+{
+  // Leerer Dev Container mit OpenCode für VS Code (Podman)
+  "name": "dev-container-open-code",
+
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+
+  // Läuft auf dem Mac, bevor der Container startet:
+  // ../work gehört zum Repo und ist nach dem Klonen schon da.
+  "initializeCommand": "test -d ../work || { echo 'Bitte zuerst den Ordner ../work anlegen (im Repo vscode-dev-container).'; exit 1; }",
+
+  // Nur ../work kommt in den Container, als /workspace.
+  // Dieser Ordner (.devcontainer, README) und das übrige Repo samt .git bleiben draussen,
+  // der Agent kann den Bauplan also nicht ändern.
+  "workspaceMount": "source=${localWorkspaceFolder}/../work,target=/workspace,type=bind",
+  "workspaceFolder": "/workspace",
+
+  // Container beim Schliessen des Fensters anhalten (mit Podman nicht immer zuverlässig)
+  "shutdownAction": "stopContainer",
+
+  // Im Container arbeiten wir als "dev", nie als root.
+  "remoteUser": "dev",
+  "containerUser": "dev",
+  "updateRemoteUserUID": false,
+
+  // Podman (rootless): Dein Mac-Benutzer wird im Container zu "dev" (UID 1000),
+  // damit der Agent in work schreiben darf.
+  // Fester DNS wie in specrun: Der Namensserver der Podman-Maschine antwortete nach Neustarts langsam.
+  "runArgs": ["--userns=keep-id:uid=1000,gid=1000", "--dns", "1.1.1.1", "--dns", "9.9.9.9"],
+
+  // API-Schlüssel kommen aus deiner Umgebung auf dem Mac (z. B. ~/.zshrc).
+  // Leere Variablen schaden nicht; alternativ meldest du dich im Container mit "opencode auth login" an.
+  "containerEnv": {
+    "OPENCODE_API_KEY": "${localEnv:OPENCODE_API_KEY}",
+    "DEEPSEEK_API_KEY": "${localEnv:DEEPSEEK_API_KEY}",
+    "ANTHROPIC_API_KEY": "${localEnv:ANTHROPIC_API_KEY}"
+  },
+
+  "mounts": [
+    // Anmeldung und Sitzungen von OpenCode überleben einen Neubau,
+    // bleiben aber im Volume und kommen nie auf den Mac.
+    "source=dev-container-open-code-data,target=/home/dev/.local/share/opencode,type=volume",
+    // Die Hausregeln aus diesem Ordner, nur lesbar (OpenCode liest die globale AGENTS.md hier).
+    "source=${localWorkspaceFolder}/AGENTS.md,target=/home/dev/.config/opencode/AGENTS.md,type=bind,readonly"
+  ],
+
+  // Kurzer Selbsttest nach dem Start
+  "postCreateCommand": "node -v && opencode --version && git --version"
+}
