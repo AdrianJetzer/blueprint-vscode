@@ -39,8 +39,9 @@ USER dev
 WORKDIR /home/dev
 ENV PATH="/home/dev/.local/bin:${PATH}"
 
-# Anmeldung und Sitzungen von OpenCode liegen in ~/.local/share/opencode,
-# das ein eigenes Volume wird (siehe devcontainer.json), nicht auf dem Mac.
+# Daten, Konfiguration und Laufzeitstatus von OpenCode werden eigene Volumes (siehe devcontainer.json).
+# Die Ordner hier anlegen, damit sie und ihre Elternordner "dev" gehören
+# (sonst legt Podman z. B. ~/.local/state als root an).
 # In ~/.config/opencode wird AGENTS.md (Hausregeln) nur lesbar eingehängt.
 # Berechtigungen bleiben beim Standard von OpenCode: Es fragt nach, bevor es etwas Heikles tut.
-RUN mkdir -p /home/dev/.local/share/opencode /home/dev/.config/opencode /home/dev/.vscode-server
+RUN mkdir -p /home/dev/.local/share/opencode /home/dev/.local/state/opencode /home/dev/.config/opencode /home/dev/.vscode-server

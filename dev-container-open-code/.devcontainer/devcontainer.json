@@ -37,11 +37,16 @@
     "ANTHROPIC_API_KEY": "${localEnv:ANTHROPIC_API_KEY}"
   },
 
+  // Alles in Volumes überlebt einen Neubau, bleibt aber in Podman und kommt nie auf den Mac.
+  // Reihenfolge wichtig: erst die Verzeichnis-Volumes, zuletzt der Datei-Bind, damit AGENTS.md über dem Config-Volume liegt.
   "mounts": [
-    // Anmeldung und Sitzungen von OpenCode überleben einen Neubau,
-    // bleiben aber im Volume und kommen nie auf den Mac.
+    // OpenCode-Datenbank: Anmeldung, Sitzungen, Verlauf, Kosten (Name nicht ändern, sonst ist alles weg)
     "source=dev-container-open-code-data,target=/home/dev/.local/share/opencode,type=volume",
-    // Die Hausregeln aus diesem Ordner, nur lesbar (OpenCode liest die globale AGENTS.md hier).
+    // OpenCode-Konfiguration: opencode.json, Agents, Commands, Skills, Plugins
+    "source=dev-container-open-code-config,target=/home/dev/.config/opencode,type=volume",
+    // Laufzeitstatus: prompt-history.jsonl, Service-Registrierung, PTY
+    "source=dev-container-open-code-state,target=/home/dev/.local/state/opencode,type=volume",
+    // Die Hausregeln aus diesem Ordner, nur lesbar – liegt über dem Config-Volume (OpenCode liest die globale AGENTS.md hier).
     "source=${localWorkspaceFolder}/AGENTS.md,target=/home/dev/.config/opencode/AGENTS.md,type=bind,readonly"
   ],
 

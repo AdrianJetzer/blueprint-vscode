@@ -14,7 +14,11 @@ Diesen Ordner öffnest du in VS Code und klickst **Reopen in Container**. Einric
 |---|---|---|
 | `../work` | `/workspace` | lesen und schreiben |
 | `AGENTS.md` | `~/.config/opencode/AGENTS.md` | nur lesen |
-| Anmeldung und Sitzungen | Volume `dev-container-open-code-data` (`~/.local/share/opencode`) | lesen und schreiben, bleibt bei einem Neubau erhalten |
+| Anmeldung, Sitzungen, Verlauf, Kosten | Volume `dev-container-open-code-data` (`~/.local/share/opencode`) | lesen und schreiben, bleibt bei einem Neubau erhalten |
+| Konfiguration: `opencode.json`, Agents, Commands, Skills, Plugins | Volume `dev-container-open-code-config` (`~/.config/opencode`) | lesen und schreiben, bleibt bei einem Neubau erhalten |
+| Laufzeitstatus: Prompt-Verlauf, PTY | Volume `dev-container-open-code-state` (`~/.local/state/opencode`) | lesen und schreiben, bleibt bei einem Neubau erhalten |
+
+Die Volumes sind kein Backup: `podman volume prune` löscht sie, sobald kein Container sie mehr verwendet.
 
 Anders als in specrun sind die Berechtigungen nicht auf „alles erlauben“ gestellt. OpenCode fragt wie gewohnt nach.
 
