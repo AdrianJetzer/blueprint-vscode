@@ -28,7 +28,11 @@ Zwei Wege, einer genügt:
    export DEEPSEEK_API_KEY=…    # Anbieter "deepseek"
    export ANTHROPIC_API_KEY=…   # Anbieter "anthropic"
    ```
-   VS Code danach ganz beenden und aus einem Terminal mit `code` starten. Aus dem Dock gestartet kennt VS Code die Variablen aus `~/.zshrc` nicht.
+   VS Code danach ganz beenden (`⌘Q`) und neu starten. Gibt es den Container schon, zusätzlich `⇧⌘P` → **Dev Containers: Rebuild Container**: Die Variablen übernimmt ein Container nur beim Anlegen, ein einfaches **Reopen in Container** behält die alten Werte.
+
+   Prüfen im Container, ohne den Schlüssel anzuzeigen: `echo ${DEEPSEEK_API_KEY:+gesetzt}`
+
+   Heisst dein Schlüssel auf dem Mac anders (z. B. `SPECRUN_DEEPSEEK_API_KEY` aus specrun), reich ihn in `~/.zshrc` weiter: `export DEEPSEEK_API_KEY="$SPECRUN_DEEPSEEK_API_KEY"`
 2. **Im Container** einmalig `opencode auth login`. Die Anmeldung liegt dann im Volume.
 
 ## Starten
